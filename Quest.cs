@@ -11,5 +11,12 @@ public class Quest
 		ID = id;
 		Name = name;
 		Description = description;
+		IsCompleted = false;
 	}
+
+	public string GetInfo()
+	{
+		return $"Name: {Name}\nDescription: {Description}\nStatus: {(IsCompleted ? "Completed" : "Available")}";
+	}
+	
 }
