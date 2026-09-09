@@ -206,4 +206,12 @@ public static class World
 
         return null;
     }
+
+    public static void QuestLog()
+	{
+        foreach (Quest quest in Quests)
+        {
+            Console.WriteLine(quest.GetInfo());
+        }
+	}
 }

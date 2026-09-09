@@ -1,4 +1,6 @@
 ﻿
+using System.Xml.Serialization;
+
 public class Quest
 {
 	public int ID;
@@ -16,7 +18,7 @@ public class Quest
 
 	public string GetInfo()
 	{
-		return $"Name: {Name}\nDescription: {Description}\nStatus: {(IsCompleted ? "Completed" : "Available")}";
+		return $"Quest #{ID}\nName: {Name}\nDescription: {Description}\nStatus: {(IsCompleted ? "Completed" : "Available")}\n";
 	}
 	
 }

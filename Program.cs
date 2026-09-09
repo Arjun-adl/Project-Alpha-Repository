@@ -18,7 +18,8 @@
             Console.WriteLine($"Current location: {player.PlayerLocation.Name}");
             Console.WriteLine("1. Show location info");
             Console.WriteLine("2. Move (N/E/S/W)");
-            Console.WriteLine("3. Exit");
+            Console.WriteLine("3. Show Quest Log");
+            Console.WriteLine("4. Exit");
 
             var choice = Console.ReadLine();
             if (choice == null)
@@ -65,6 +66,12 @@
                     Console.ReadKey();
                     break;
                 case "3":
+                    Console.Clear();
+                    Console.WriteLine("Quest Log:");
+                    World.QuestLog();
+                    Console.ReadKey();
+                    break;
+                case "4":
                     return;
                 default:
                     Console.WriteLine("Invalid choice.");
