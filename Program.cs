@@ -19,7 +19,8 @@
             Console.WriteLine("1. Show location info");
             Console.WriteLine("2. Move (N/E/S/W)");
             Console.WriteLine("3. Show Quest Log");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Show Inventory");
+            Console.WriteLine("5. Exit");
 
             var choice = Console.ReadLine();
             if (choice == null)
@@ -72,6 +73,11 @@
                     Console.ReadKey();
                     break;
                 case "4":
+                    Console.Clear();
+                    player.PrintInventory();
+                    Console.ReadKey();
+                    break;
+                case "5":
                     return;
                 default:
                     Console.WriteLine("Invalid choice.");

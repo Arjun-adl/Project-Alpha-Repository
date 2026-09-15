@@ -24,7 +24,12 @@
     }
 
     public void PrintInventory()
-    {   
+    {
+        if (inventory.Count == 0)
+        {
+            Console.WriteLine("Inventory is empty.");
+            return;
+        }
         Console.WriteLine("Inventory: ");
         foreach (var item in inventory)
         {
