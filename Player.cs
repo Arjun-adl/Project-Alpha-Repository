@@ -2,24 +2,24 @@
 {
     public Location PlayerLocation;
     public readonly string Name;
-    public Dictionary<string, int> inventory;
+    public Dictionary<Item, int> inventory;
 
     public Player(string name, Location location)
     {
         Name = name;
-        inventory = new Dictionary<string, int>();
+        inventory = new Dictionary<Item, int>();
         PlayerLocation = location;
     }
 
-    public void AddItem(string itemName, int amount = 1)
+    public void AddItem(Item item, int amount = 1)
     {
-        if (inventory.ContainsKey(itemName))
+        if (inventory.ContainsKey(item))
         {
-            inventory[itemName] += amount;
+            inventory[item] += amount;
         }
         else
         {
-            inventory[itemName] = amount;
+            inventory[item] = amount;
         }
     }
 
@@ -31,9 +31,9 @@
             return;
         }
         Console.WriteLine("Inventory: ");
-        foreach (var item in inventory)
+        foreach (var kvp in inventory)
         {
-            Console.WriteLine($"{item.Key}: {item.Value}");
+            Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
         }
     }
 }

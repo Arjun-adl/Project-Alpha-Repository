@@ -5,6 +5,10 @@
     {
         Player player = new Player("Hero", World.LocationByID(World.LOCATION_ID_HOME));
 
+        //basic gear for the player
+        player.AddItem(World.WeaponByID(World.WEAPON_ID_RUSTY_SWORD));
+        player.AddItem(World.PotionByID(World.POTION_ID_HEALING_POTION));
+
         Console.Clear();
         Console.WriteLine("Welcome to Project Alpha");
         Console.WriteLine("Press any key to continue...");

@@ -5,7 +5,7 @@ public static class World
     public static readonly List<Monster> Monsters = new List<Monster>();
 
     public static readonly List<Potion> Potions = new List<Potion>();
-    
+
     public static readonly List<Quest> Quests = new List<Quest>();
     public static readonly List<Location> Locations = new List<Location>();
     public static readonly Random RandomGenerator = new Random();
@@ -37,6 +37,7 @@ public static class World
     {
         PopulateWeapons();
         PopulateMonsters();
+        PopulatePotions();
         PopulateQuests();
         PopulateLocations();
     }
@@ -211,6 +212,19 @@ public static class World
             if (quest.ID == id)
             {
                 return quest;
+            }
+        }
+
+        return null;
+    }
+
+    public static Potion PotionByID(int id)
+    {
+        foreach (Potion potion in Potions)
+        {
+            if (potion.ID == id)
+            {
+                return potion;
             }
         }
 
