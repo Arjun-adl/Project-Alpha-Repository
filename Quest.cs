@@ -5,12 +5,9 @@
     public string Description;
     public bool IsActive;
     public bool IsComplete;
-    public Weapon? RewardWeapon;
-    public Potion? RewardPotion;
-    public int RewardMaximumHitPoints;
-    public bool RewardIsClaimed;
 
 	public bool RewardClaimed;
+	
 
     public Quest(int id, string name, string description)
     {
@@ -36,45 +33,9 @@
             status = "Complete";
         }
 
-        return $"{Name} - {Description} [{status}] Reward: {GetRewardInfo()}";
+        return $"{Name} - {Description} [{status}]";
     }
 
-    public string GetRewardInfo()
-    {
-        string info = "";
-
-        if (RewardWeapon != null)
-        {
-            info = info + RewardWeapon.Name;
-        }
-
-        if (RewardPotion != null)
-        {
-            if (info != "")
-            {
-                info = info + " and ";
-            }
-
-            info = info + RewardPotion.Name;
-        }
-
-        if (RewardMaximumHitPoints > 0)
-        {
-            if (info != "")
-            {
-                info = info + " and ";
-            }
-
-            info = info + RewardMaximumHitPoints + " extra maximum hit points";
-        }
-
-        if (info == "")
-        {
-            info = "None";
-        }
-
-        return info;
-    }
 
     public void giveReward(Item reward)
 	{
