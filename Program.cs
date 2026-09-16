@@ -1,6 +1,5 @@
 ﻿public static class Program
 {
-
     public static void Main()
     {
         Player player = new Player("Hero", World.LocationByID(World.LOCATION_ID_HOME));
@@ -21,7 +20,8 @@
             Console.WriteLine("3. Show Quest Log");
             Console.WriteLine("4. Exit");
 
-            var choice = Console.ReadLine();
+            string? choice = Console.ReadLine();
+
             if (choice == null)
             {
                 choice = "";
@@ -33,25 +33,74 @@
                     player.PlayerLocation.ShowLocationInfo();
                     Console.ReadKey();
                     break;
+
                 case "2":
                     Location.ShowMap(player);
 
                     Console.Write("Enter direction (N/E/S/W): ");
-                    string direction = Console.ReadLine();
+                    string? direction = Console.ReadLine();
+
                     if (direction == null)
                     {
                         direction = "";
                     }
 
                     direction = direction.ToUpper();
+
                     if (direction.Length == 1)
                     {
-                        var nextLocation = player.PlayerLocation.Move(direction[0]);
+                        Location? nextLocation = player.PlayerLocation.Move(direction[0]);
 
                         if (nextLocation != null)
                         {
                             player.PlayerLocation = nextLocation;
+
                             Console.WriteLine($"You moved to {nextLocation.Name}.");
+
+                            if (player.PlayerLocation.QuestAvailableHere != null)
+                            {
+                                Quest quest = player.PlayerLocation.QuestAvailableHere;
+
+                                if (!quest.IsActive && !quest.IsComplete)
+                                {
+                                    Console.WriteLine();
+                                    Console.WriteLine($"Quest available: {quest.Name}");
+                                    Console.WriteLine(quest.Description);
+                                    Console.WriteLine();
+                                    Console.WriteLine("Accept quest? (Y/N)");
+
+                                    string? answer = Console.ReadLine();
+
+                                    if (answer != null && answer.ToUpper() == "Y")
+                                    {
+                                        quest.IsActive = true;
+
+                                        Console.WriteLine();
+                                        Console.WriteLine($"Quest accepted: {quest.Name}");
+                                    }
+                                }
+                            }
+
+                            if (player.PlayerLocation.MonsterLivingHere != null)
+                            {
+                                Battle.StartBattle(player.PlayerLocation.MonsterLivingHere);
+
+                                if (AllQuestsComplete())
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine();
+                                    Console.WriteLine("================================");
+                                    Console.WriteLine("          YOU WIN!");
+                                    Console.WriteLine("================================");
+                                    Console.WriteLine();
+                                    Console.WriteLine("You completed all three quests!");
+                                    Console.WriteLine();
+                                    Console.WriteLine("Press any key to exit...");
+                                    Console.ReadKey();
+
+                                    return;
+                                }
+                            }
                         }
                         else
                         {
@@ -65,14 +114,17 @@
 
                     Console.ReadKey();
                     break;
+
                 case "3":
                     Console.Clear();
                     Console.WriteLine("Quest Log:");
                     World.QuestLog();
                     Console.ReadKey();
                     break;
+
                 case "4":
                     return;
+
                 default:
                     Console.WriteLine("Invalid choice.");
                     Console.ReadKey();
@@ -81,5 +133,16 @@
         }
     }
 
-    
+    private static bool AllQuestsComplete()
+    {
+        foreach (Quest quest in World.Quests)
+        {
+            if (!quest.IsComplete)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

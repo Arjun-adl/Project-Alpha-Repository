@@ -5,14 +5,14 @@
     public string Description;
     public int X;
     public int Y;
-    public Location LocationToNorth;
-    public Location LocationToEast;
-    public Location LocationToSouth;
-    public Location LocationToWest;
-    public Quest QuestAvailableHere;
-    public Monster MonsterLivingHere;
+    public Location? LocationToNorth;
+    public Location? LocationToEast;
+    public Location? LocationToSouth;
+    public Location? LocationToWest;
+    public Quest? QuestAvailableHere;
+    public Monster? MonsterLivingHere;
 
-    public Location(int id, string name, string description, Location locationToNorth, Location locationToEast)
+    public Location(int id, string name, string description, Location? locationToNorth, Location? locationToEast)
     {
         ID = id;
         Name = name;
@@ -21,9 +21,9 @@
         LocationToEast = locationToEast;
     }
 
-    public Location Move(char direction)
+    public Location? Move(char direction)
     {
-        Location nextLocation = direction switch
+        Location? nextLocation = direction switch
         {
             'N' => LocationToNorth,
             'E' => LocationToEast,
@@ -44,14 +44,17 @@
         {
             Console.WriteLine($"To the North is {LocationToNorth.Name}.");
         }
+
         if (LocationToEast != null)
         {
             Console.WriteLine($"To the East is {LocationToEast.Name}.");
         }
+
         if (LocationToSouth != null)
         {
             Console.WriteLine($"To the South is {LocationToSouth.Name}.");
         }
+
         if (LocationToWest != null)
         {
             Console.WriteLine($"To the West is {LocationToWest.Name}.");
@@ -91,7 +94,4 @@
             _ => '?'
         };
     }
-        
 }
-
-
