@@ -27,8 +27,8 @@ public static class Battle
 
         while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
-            Console.WriteLine($"{player.Name}: {player.CurrentHitPoints}/{player.MaximumHitPoints} HP");
-            Console.WriteLine($"{monster.Name}: {monster.CurrentHitPoints} HP");
+            Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
+            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
             Console.WriteLine();
             Console.WriteLine("1. Attack");
             Console.WriteLine("2. Use Item");
@@ -57,12 +57,18 @@ public static class Battle
 
                 monster.CurrentHitPoints -= playerDamage;
 
+                if (monster.CurrentHitPoints < 0)
+                {
+                    monster.CurrentHitPoints = 0;
+                }
+
                 Console.WriteLine();
                 Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
+                Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+                Console.WriteLine();
 
                 if (monster.CurrentHitPoints <= 0)
                 {
-                    Console.WriteLine();
                     Console.WriteLine($"You defeated the {monster.Name}!");
 
                     CompleteQuest(monster);
@@ -70,6 +76,10 @@ public static class Battle
                     Console.ReadKey();
                     return true;
                 }
+
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
 
                 MonsterAttack(player, monster);
             }
@@ -79,6 +89,11 @@ public static class Battle
 
                 if (player.CurrentHitPoints > 0)
                 {
+                    Console.WriteLine();
+                    Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+                    Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
+                    Console.WriteLine();
+
                     MonsterAttack(player, monster);
                 }
             }
@@ -93,6 +108,8 @@ public static class Battle
             {
                 Console.WriteLine();
                 Console.WriteLine("Invalid choice.");
+                Console.ReadKey();
+                Console.Clear();
             }
 
             if (player.CurrentHitPoints <= 0)
@@ -124,12 +141,16 @@ public static class Battle
             player.CurrentHitPoints = 0;
         }
 
+        Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
         Console.WriteLine();
-        Console.WriteLine(
-            $"The {monster.Name} attacks you for {monsterDamage} damage.");
-        Console.WriteLine(
-            $"You have {player.CurrentHitPoints}/{player.MaximumHitPoints} HP left.");
+        Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
+        Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
         Console.WriteLine();
+
+        if (player.CurrentHitPoints > 0)
+        {
+            Console.WriteLine("Press any key to continue...");
+        }
 
         Console.ReadKey();
         Console.Clear();
@@ -205,10 +226,9 @@ public static class Battle
         Console.WriteLine();
         Console.WriteLine($"You used a {selectedPotion.Name}.");
         Console.WriteLine($"You recovered {actualHealing} HP.");
-        Console.WriteLine(
-            $"HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-
+        Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
         Console.ReadKey();
+        Console.Clear();
     }
 
     private static void CompleteQuest(Monster monster)
