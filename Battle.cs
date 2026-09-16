@@ -18,6 +18,10 @@
 
 public static class Battle
 {
+    public const int HIT_CHANCE = 70;
+    public const int BLOCK_CHANCE = 15;
+    public const int UNARMED_DAMAGE = 5;
+
     public static bool StartBattle(Player player, Monster monster)
     {
         Console.Clear();
@@ -44,16 +48,8 @@ public static class Battle
 
             if (choice == "1")
             {
-                int playerDamage = 1;
-
-                if (player.EquippedWeapon != null)
-                {
-                    playerDamage = player.EquippedWeapon.Damage;
-                }
-                else
-                {
-                    playerDamage = World.RandomGenerator.Next(1, 6);
-                }
+                string outcome = RollOutcome();
+                int playerDamage = GetDamageForOutcome(outcome, RollPlayerDamage(player));
 
                 monster.CurrentHitPoints -= playerDamage;
 
@@ -63,7 +59,20 @@ public static class Battle
                 }
 
                 Console.WriteLine();
-                Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
+
+                if (outcome == "hit")
+                {
+                    Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
+                }
+                else if (outcome == "blocked")
+                {
+                    Console.WriteLine($"The {monster.Name} blocked your attack. You deal {playerDamage} damage.");
+                }
+                else
+                {
+                    Console.WriteLine($"You missed the {monster.Name}. You deal 0 damage.");
+                }
+
                 Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
                 Console.WriteLine();
 
@@ -128,11 +137,65 @@ public static class Battle
         return false;
     }
 
+    public static string RollOutcome()
+    {
+        int roll = World.RandomGenerator.Next(1, 101);
+
+        if (roll <= HIT_CHANCE)
+        {
+            return "hit";
+        }
+
+        if (roll <= HIT_CHANCE + BLOCK_CHANCE)
+        {
+            return "blocked";
+        }
+
+        return "miss";
+    }
+
+    public static int RollPlayerDamage(Player player)
+    {
+        int maximumDamage = UNARMED_DAMAGE;
+
+        if (player.EquippedWeapon != null)
+        {
+            maximumDamage = player.EquippedWeapon.Damage;
+        }
+
+        int minimumDamage = maximumDamage / 2;
+
+        if (minimumDamage < 1)
+        {
+            minimumDamage = 1;
+        }
+
+        return World.RandomGenerator.Next(minimumDamage, maximumDamage + 1);
+    }
+
+    public static int GetDamageForOutcome(string outcome, int damage)
+    {
+        if (outcome == "miss")
+        {
+            return 0;
+        }
+
+        if (outcome == "blocked")
+        {
+            return damage / 2;
+        }
+
+        return damage;
+    }
+
     private static void MonsterAttack(Player player, Monster monster)
     {
+        string outcome = RollOutcome();
         int monsterDamage = World.RandomGenerator.Next(
             monster.MinimumDamage,
             monster.MaximumDamage + 1);
+
+        monsterDamage = GetDamageForOutcome(outcome, monsterDamage);
 
         player.CurrentHitPoints -= monsterDamage;
 
@@ -141,7 +204,18 @@ public static class Battle
             player.CurrentHitPoints = 0;
         }
 
-        Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
+        if (outcome == "hit")
+        {
+            Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
+        }
+        else if (outcome == "blocked")
+        {
+            Console.WriteLine($"You blocked the {monster.Name}'s attack. You take {monsterDamage} damage.");
+        }
+        else
+        {
+            Console.WriteLine($"The {monster.Name} missed you. You take 0 damage.");
+        }
         Console.WriteLine();
         Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
         Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
