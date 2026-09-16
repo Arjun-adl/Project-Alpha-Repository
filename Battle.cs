@@ -18,9 +18,6 @@
 
 public static class Battle
 {
-    public const int HIT_CHANCE = 70;
-    public const int BLOCK_CHANCE = 15;
-
     public static bool StartBattle(Player player, Monster monster)
     {
         Console.Clear();
@@ -58,9 +55,6 @@ public static class Battle
                     playerDamage = World.RandomGenerator.Next(1, 6);
                 }
 
-                string outcome = RollOutcome();
-                playerDamage = GetDamageForOutcome(outcome, playerDamage);
-
                 monster.CurrentHitPoints -= playerDamage;
 
                 if (monster.CurrentHitPoints < 0)
@@ -69,20 +63,7 @@ public static class Battle
                 }
 
                 Console.WriteLine();
-
-                if (outcome == "hit")
-                {
-                    Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
-                }
-                else if (outcome == "blocked")
-                {
-                    Console.WriteLine($"The {monster.Name} blocked your attack. You deal {playerDamage} damage.");
-                }
-                else
-                {
-                    Console.WriteLine($"You missed the {monster.Name}. You deal 0 damage.");
-                }
-
+                Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
                 Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
                 Console.WriteLine();
 
@@ -147,46 +128,11 @@ public static class Battle
         return false;
     }
 
-    public static string RollOutcome()
-    {
-        int roll = World.RandomGenerator.Next(1, 101);
-
-        if (roll <= HIT_CHANCE)
-        {
-            return "hit";
-        }
-
-        if (roll <= HIT_CHANCE + BLOCK_CHANCE)
-        {
-            return "blocked";
-        }
-
-        return "miss";
-    }
-
-    public static int GetDamageForOutcome(string outcome, int damage)
-    {
-        if (outcome == "miss")
-        {
-            return 0;
-        }
-
-        if (outcome == "blocked")
-        {
-            return damage / 2;
-        }
-
-        return damage;
-    }
-
     private static void MonsterAttack(Player player, Monster monster)
     {
         int monsterDamage = World.RandomGenerator.Next(
             monster.MinimumDamage,
             monster.MaximumDamage + 1);
-
-        string outcome = RollOutcome();
-        monsterDamage = GetDamageForOutcome(outcome, monsterDamage);
 
         player.CurrentHitPoints -= monsterDamage;
 
@@ -195,18 +141,7 @@ public static class Battle
             player.CurrentHitPoints = 0;
         }
 
-        if (outcome == "hit")
-        {
-            Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
-        }
-        else if (outcome == "blocked")
-        {
-            Console.WriteLine($"You blocked the {monster.Name}'s attack. You take {monsterDamage} damage.");
-        }
-        else
-        {
-            Console.WriteLine($"The {monster.Name} missed you. You take 0 damage.");
-        }
+        Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
         Console.WriteLine();
         Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
         Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
