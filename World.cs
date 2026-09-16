@@ -123,6 +123,7 @@ public static class World
             null);
 
         alchemistsGarden.MonsterLivingHere = MonsterByID(MONSTER_ID_RAT);
+        alchemistsGarden.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
 
         Location farmhouse = new Location(
             LOCATION_ID_FARMHOUSE,
@@ -141,6 +142,9 @@ public static class World
             null);
 
         farmersField.MonsterLivingHere = MonsterByID(MONSTER_ID_SNAKE);
+
+        farmersField.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_FARMERS_FIELD);
+
 
         Location guardPost = new Location(
             LOCATION_ID_GUARD_POST,
@@ -166,6 +170,7 @@ public static class World
             null);
 
         spiderField.MonsterLivingHere = MonsterByID(MONSTER_ID_GIANT_SPIDER);
+        spiderField.QuestAvailableHere = QuestByID(QUEST_ID_COLLECT_SPIDER_SILK);
 
         home.LocationToNorth = townSquare;
 

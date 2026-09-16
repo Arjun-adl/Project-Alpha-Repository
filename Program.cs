@@ -15,6 +15,7 @@
         while (true)
         {
             Console.Clear();
+            Location.ShowMap(player);
             Console.WriteLine();
             Console.WriteLine("What would you like to do?");
             Console.WriteLine($"Current location: {player.PlayerLocation.Name}");
@@ -40,6 +41,7 @@
                     break;
 
                 case "2":
+                    Console.Clear();
                     Location.ShowMap(player);
 
                     Console.Write("Enter direction (N/E/S/W): ");
@@ -59,12 +61,14 @@
                         if (nextLocation != null)
                         {
                             player.PlayerLocation = nextLocation;
+                            Quest? quest = player.PlayerLocation.QuestAvailableHere;
 
                             Console.WriteLine($"You moved to {nextLocation.Name}.");
 
-                            if (player.PlayerLocation.QuestAvailableHere != null)
+                            if (quest != null &&
+                                player.PlayerLocation.MonsterLivingHere == null &&
+                                !quest.IsComplete)
                             {
-                                Quest quest = player.PlayerLocation.QuestAvailableHere;
 
                                 if (!quest.IsActive && !quest.IsComplete)
                                 {
@@ -83,10 +87,18 @@
                                         Console.WriteLine();
                                         Console.WriteLine($"Quest accepted: {quest.Name}");
                                     }
-                                }
+                                }   
                             }
 
-                            if (player.PlayerLocation.MonsterLivingHere != null)
+                            if (quest != null && quest.IsComplete)
+                            {
+                                Console.WriteLine();
+                                Quest.GiveReward(player, quest);
+                            }
+
+                            if (player.PlayerLocation.MonsterLivingHere != null &&
+                                quest != null &&
+                                quest.IsActive)
                             {
                                 Battle.StartBattle(
                                     player,
