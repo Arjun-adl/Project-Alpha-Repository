@@ -17,6 +17,12 @@
         CurrentHitPoints = MaximumHitPoints;
     }
 
+    public void IncreaseMaximumHitPoints(int amount)
+    {
+        MaximumHitPoints = MaximumHitPoints + amount;
+        CurrentHitPoints = CurrentHitPoints + amount;
+    }
+
     public void AddItem(Item item, int amount = 1)
     {
         if (inventory.ContainsKey(item))
