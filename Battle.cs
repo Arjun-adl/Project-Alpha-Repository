@@ -18,45 +18,197 @@
 
 public static class Battle
 {
-    public static bool StartBattle(Monster monster)
+    public static bool StartBattle(Player player, Monster monster)
     {
-        Console.WriteLine();
+        Console.Clear();
+
         Console.WriteLine($"A {monster.Name} appears!");
         Console.WriteLine();
 
-        while (monster.CurrentHitPoints > 0)
+        while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
-            Console.WriteLine($"{monster.Name} has {monster.CurrentHitPoints} HP.");
-            Console.WriteLine("Press ENTER to attack.");
+            Console.WriteLine($"{player.Name}: {player.CurrentHitPoints}/{player.MaximumHitPoints} HP");
+            Console.WriteLine($"{monster.Name}: {monster.CurrentHitPoints} HP");
+            Console.WriteLine();
+            Console.WriteLine("1. Attack");
+            Console.WriteLine("2. Use Item");
+            Console.WriteLine("3. Flee");
+            Console.WriteLine();
 
-            Console.ReadLine();
+            string? choice = Console.ReadLine();
 
-            int playerDamage = World.RandomGenerator.Next(1, 6);
-
-            monster.CurrentHitPoints -= playerDamage;
-
-            Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
-
-            if (monster.CurrentHitPoints <= 0)
+            if (choice == null)
             {
-                Console.WriteLine();
-                Console.WriteLine($"You defeated the {monster.Name}!");
-                Console.WriteLine();
-
-                CompleteQuest(monster);
-
-                return true;
+                choice = "";
             }
 
-            int monsterDamage = World.RandomGenerator.Next(
-                monster.MinimumDamage,
-                monster.MaximumDamage + 1);
+            if (choice == "1")
+            {
+                int playerDamage = 1;
 
-            Console.WriteLine(
-                $"The {monster.Name} attacks you for {monsterDamage} damage.");
+                if (player.EquippedWeapon != null)
+                {
+                    playerDamage = player.EquippedWeapon.Damage;
+                }
+                else
+                {
+                    playerDamage = World.RandomGenerator.Next(1, 6);
+                }
+
+                monster.CurrentHitPoints -= playerDamage;
+
+                Console.WriteLine();
+                Console.WriteLine($"You hit the {monster.Name} for {playerDamage} damage.");
+
+                if (monster.CurrentHitPoints <= 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"You defeated the {monster.Name}!");
+
+                    CompleteQuest(monster);
+
+                    Console.ReadKey();
+                    return true;
+                }
+
+                MonsterAttack(player, monster);
+            }
+            else if (choice == "2")
+            {
+                UseItem(player);
+
+                if (player.CurrentHitPoints > 0)
+                {
+                    MonsterAttack(player, monster);
+                }
+            }
+            else if (choice == "3")
+            {
+                Console.WriteLine();
+                Console.WriteLine($"You fled from the {monster.Name}.");
+                Console.ReadKey();
+                return false;
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Invalid choice.");
+            }
+
+            if (player.CurrentHitPoints <= 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("You were defeated.");
+                Console.WriteLine("You return home.");
+
+                player.PlayerLocation = World.LocationByID(World.LOCATION_ID_HOME);
+
+                Console.ReadKey();
+                return false;
+            }
         }
 
         return false;
+    }
+
+    private static void MonsterAttack(Player player, Monster monster)
+    {
+        int monsterDamage = World.RandomGenerator.Next(
+            monster.MinimumDamage,
+            monster.MaximumDamage + 1);
+
+        player.CurrentHitPoints -= monsterDamage;
+
+        if (player.CurrentHitPoints < 0)
+        {
+            player.CurrentHitPoints = 0;
+        }
+
+        Console.WriteLine();
+        Console.WriteLine(
+            $"The {monster.Name} attacks you for {monsterDamage} damage.");
+        Console.WriteLine(
+            $"You have {player.CurrentHitPoints}/{player.MaximumHitPoints} HP left.");
+        Console.WriteLine();
+
+        Console.ReadKey();
+        Console.Clear();
+    }
+
+    private static void UseItem(Player player)
+    {
+        List<Potion> potionsInInventory = new List<Potion>();
+
+        foreach (var kvp in player.inventory)
+        {
+            if (kvp.Key is Potion potion && kvp.Value > 0)
+            {
+                potionsInInventory.Add(potion);
+            }
+        }
+
+        if (potionsInInventory.Count == 0)
+        {
+            Console.WriteLine();
+            Console.WriteLine("You have no usable items.");
+            Console.ReadKey();
+            return;
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Items:");
+
+        for (int i = 0; i < potionsInInventory.Count; i++)
+        {
+            Potion potion = potionsInInventory[i];
+            Console.WriteLine($"{i + 1}. {potion.Name} x{player.inventory[potion]}");
+        }
+
+        Console.WriteLine("0. Cancel");
+
+        string? input = Console.ReadLine();
+
+        if (!int.TryParse(input, out int choice))
+        {
+            Console.WriteLine("Invalid choice.");
+            Console.ReadKey();
+            return;
+        }
+
+        if (choice == 0)
+        {
+            return;
+        }
+
+        if (choice < 1 || choice > potionsInInventory.Count)
+        {
+            Console.WriteLine("Invalid choice.");
+            Console.ReadKey();
+            return;
+        }
+
+        Potion selectedPotion = potionsInInventory[choice - 1];
+
+        int oldHP = player.CurrentHitPoints;
+
+        player.CurrentHitPoints += selectedPotion.AmountToHeal;
+
+        if (player.CurrentHitPoints > player.MaximumHitPoints)
+        {
+            player.CurrentHitPoints = player.MaximumHitPoints;
+        }
+
+        int actualHealing = player.CurrentHitPoints - oldHP;
+
+        player.inventory[selectedPotion]--;
+
+        Console.WriteLine();
+        Console.WriteLine($"You used a {selectedPotion.Name}.");
+        Console.WriteLine($"You recovered {actualHealing} HP.");
+        Console.WriteLine(
+            $"HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
+
+        Console.ReadKey();
     }
 
     private static void CompleteQuest(Monster monster)

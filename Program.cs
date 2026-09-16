@@ -4,7 +4,6 @@
     {
         Player player = new Player("Hero", World.LocationByID(World.LOCATION_ID_HOME));
 
-        //basic gear for the player
         player.AddItem(World.WeaponByID(World.WEAPON_ID_RUSTY_SWORD));
         player.AddItem(World.PotionByID(World.POTION_ID_HEALING_POTION));
 
@@ -19,6 +18,7 @@
             Console.WriteLine();
             Console.WriteLine("What would you like to do?");
             Console.WriteLine($"Current location: {player.PlayerLocation.Name}");
+            Console.WriteLine($"HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
             Console.WriteLine("1. Show location info");
             Console.WriteLine("2. Move (N/E/S/W)");
             Console.WriteLine("3. Show Quest Log");
@@ -88,7 +88,9 @@
 
                             if (player.PlayerLocation.MonsterLivingHere != null)
                             {
-                                Battle.StartBattle(player.PlayerLocation.MonsterLivingHere);
+                                Battle.StartBattle(
+                                    player,
+                                    player.PlayerLocation.MonsterLivingHere);
 
                                 if (AllQuestsComplete())
                                 {
@@ -132,6 +134,7 @@
                     player.PrintInventory();
                     Console.ReadKey();
                     break;
+
                 case "5":
                     return;
 
