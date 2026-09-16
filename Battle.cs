@@ -253,6 +253,8 @@ public static class Battle
             quest.IsActive = false;
             quest.IsComplete = true;
 
+			Console.WriteLine($"Go to the quest giver to collect your reward.");
+
             Console.WriteLine($"Quest complete: {quest.Name}");
         }
     }
