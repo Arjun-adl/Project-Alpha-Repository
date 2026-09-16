@@ -4,6 +4,8 @@
     public readonly string Name;
     public Dictionary<Item, int> inventory;
     public Weapon EquippedWeapon;
+    public int CurrentHitPoints;
+    public int MaximumHitPoints;
 
     public Player(string name, Location location, Weapon equippedWeapon = null)
     {
@@ -11,6 +13,8 @@
         inventory = new Dictionary<Item, int>();
         PlayerLocation = location;
         EquippedWeapon = equippedWeapon;
+        MaximumHitPoints = 50;
+        CurrentHitPoints = MaximumHitPoints;
     }
 
     public void AddItem(Item item, int amount = 1)
@@ -49,6 +53,7 @@
             Console.WriteLine("Press Y to equip a weapon, or Enter to return to the main menu.");
 
             string choice = Console.ReadLine();
+
             if (choice == null)
             {
                 choice = "";
@@ -73,6 +78,7 @@
     private void EquipWeaponMenu()
     {
         List<Weapon> weaponsInInventory = new List<Weapon>();
+
         foreach (var kvp in inventory)
         {
             if (kvp.Key is Weapon weapon)
@@ -89,14 +95,17 @@
         }
 
         Console.WriteLine("Which weapon would you like to equip?");
+
         for (int i = 0; i < weaponsInInventory.Count; i++)
         {
             Console.WriteLine($"{i + 1}. {weaponsInInventory[i].Name}");
         }
 
         string input = Console.ReadLine();
+
         if (int.TryParse(input, out int choiceIndex) &&
-            choiceIndex - 1 >= 0 && choiceIndex - 1 < weaponsInInventory.Count)
+            choiceIndex - 1 >= 0 &&
+            choiceIndex - 1 < weaponsInInventory.Count)
         {
             EquippedWeapon = weaponsInInventory[choiceIndex - 1];
             Console.WriteLine($"You have equipped {EquippedWeapon.Name}.");
