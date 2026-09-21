@@ -33,7 +33,8 @@ public static class Battle
         while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
             Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
+            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}\n");
+            Console.WriteLine($"Equipped Weapon: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "None")} (DMG: {(player.EquippedWeapon !=  null ? player.EquippedWeapon.Damage : 0)})");
             Console.WriteLine();
             Console.WriteLine($"(Hit chance: {HIT_CHANCE}%, Block chance: {BLOCK_CHANCE}%, Missing chance: {100 - HIT_CHANCE - BLOCK_CHANCE}%)");
             Console.WriteLine($"1. Attack");
