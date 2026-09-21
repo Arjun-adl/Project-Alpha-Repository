@@ -35,7 +35,8 @@ public static class Battle
             Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
             Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
             Console.WriteLine();
-            Console.WriteLine("1. Attack");
+            Console.WriteLine($"(Hit chance: {HIT_CHANCE}%, Block chance: {BLOCK_CHANCE}%, Missing chance: {100 - HIT_CHANCE - BLOCK_CHANCE}%)");
+            Console.WriteLine($"1. Attack");
             Console.WriteLine("2. Use Item");
             Console.WriteLine("3. Flee");
             Console.WriteLine();
