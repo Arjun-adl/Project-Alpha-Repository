@@ -5,14 +5,16 @@
     public int MinimumDamage;
     public int MaximumDamage;
     public int CurrentHitPoints;
+    public int MaximumHitPoints;
 
-    public Monster(int id, string name, int minimumDamage, int maximumDamage, int currentHitPoints)
+    public Monster(int id, string name, int minimumDamage, int maximumDamage, int currentHitPoints, int maximumHitPoints)
     {
         ID = id;
         Name = name;
         MinimumDamage = minimumDamage;
         MaximumDamage = maximumDamage;
         CurrentHitPoints = currentHitPoints;
+        MaximumHitPoints = maximumHitPoints;
     }
 }
 
@@ -31,7 +33,7 @@ public static class Battle
         while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
             Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
             Console.WriteLine();
             Console.WriteLine("1. Attack");
             Console.WriteLine("2. Use Item");
@@ -83,7 +85,7 @@ public static class Battle
                     Console.WriteLine($"You missed the {monster.Name}. You deal 0 damage.");
                 }
 
-                Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+                Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
                 Console.WriteLine();
 
                 if (monster.CurrentHitPoints <= 0)
@@ -109,7 +111,7 @@ public static class Battle
                 if (player.CurrentHitPoints > 0)
                 {
                     Console.WriteLine();
-                    Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+                    Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
                     Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
                     Console.WriteLine();
 
@@ -209,7 +211,7 @@ public static class Battle
         }
         Console.WriteLine();
         Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-        Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}");
+        Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
         Console.WriteLine();
 
         if (player.CurrentHitPoints > 0)
