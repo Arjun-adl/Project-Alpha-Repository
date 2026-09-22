@@ -2,11 +2,10 @@ public static class World
 {
     public static readonly List<Weapon> Weapons = new List<Weapon>();
     public static readonly List<Monster> Monsters = new List<Monster>();
-
     public static readonly List<Potion> Potions = new List<Potion>();
-
     public static readonly List<Quest> Quests = new List<Quest>();
     public static readonly List<Location> Locations = new List<Location>();
+
     public static readonly Random RandomGenerator = new Random();
 
     public const int WEAPON_ID_RUSTY_SWORD = 1;
@@ -43,22 +42,53 @@ public static class World
 
     public static void PopulateWeapons()
     {
-        Weapons.Add(new Weapon(WEAPON_ID_RUSTY_SWORD, "Rusty sword", 5));
-        Weapons.Add(new Weapon(WEAPON_ID_CLUB, "Club", 10));
+        Weapons.Add(
+            new Weapon(
+                WEAPON_ID_RUSTY_SWORD,
+                "Rusty sword",
+                5));
+
+        Weapons.Add(
+            new Weapon(
+                WEAPON_ID_CLUB,
+                "Club",
+                10));
     }
 
     public static void PopulatePotions()
     {
-        Potions.Add(new Potion(POTION_ID_HEALING_POTION, "Healing Potion", 20));
+        Potions.Add(
+            new Potion(
+                POTION_ID_HEALING_POTION,
+                "Healing Potion",
+                20));
     }
 
     public static void PopulateMonsters()
     {
-        Monster rat = new Monster(MONSTER_ID_RAT, "rat", 1, 3, 3);
+        Monster rat =
+            new Monster(
+                MONSTER_ID_RAT,
+                "rat",
+                1,
+                3,
+                3);
 
-        Monster snake = new Monster(MONSTER_ID_SNAKE, "snake", 7, 10, 7);
+        Monster snake =
+            new Monster(
+                MONSTER_ID_SNAKE,
+                "snake",
+                7,
+                10,
+                7);
 
-        Monster giantSpider = new Monster(MONSTER_ID_GIANT_SPIDER, "giant spider", 3, 10, 10);
+        Monster giantSpider =
+            new Monster(
+                MONSTER_ID_GIANT_SPIDER,
+                "giant spider",
+                3,
+                10,
+                10);
 
         Monsters.Add(rat);
         Monsters.Add(snake);
@@ -92,85 +122,110 @@ public static class World
 
     public static void PopulateLocations()
     {
-        Location home = new Location(
-            LOCATION_ID_HOME,
-            "Home",
-            "Your house. You really need to clean up the place.",
-            null,
-            null);
+        Location home =
+            new Location(
+                LOCATION_ID_HOME,
+                "Home",
+                "Your house. You really need to clean up the place.",
+                null,
+                null);
 
-        Location townSquare = new Location(
-            LOCATION_ID_TOWN_SQUARE,
-            "Town square",
-            "You see a fountain.",
-            null,
-            null);
+        Location townSquare =
+            new Location(
+                LOCATION_ID_TOWN_SQUARE,
+                "Town square",
+                "You see a fountain.",
+                null,
+                null);
 
-        Location alchemistHut = new Location(
-            LOCATION_ID_ALCHEMIST_HUT,
-            "Alchemist's hut",
-            "There are many strange plants on the shelves.",
-            null,
-            null);
+        Location alchemistHut =
+            new Location(
+                LOCATION_ID_ALCHEMIST_HUT,
+                "Alchemist's hut",
+                "There are many strange plants on the shelves.",
+                null,
+                null);
 
-        alchemistHut.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
+        alchemistHut.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
 
-        Location alchemistsGarden = new Location(
-            LOCATION_ID_ALCHEMISTS_GARDEN,
-            "Alchemist's garden",
-            "Many plants are growing here.",
-            null,
-            null);
+        Location alchemistsGarden =
+            new Location(
+                LOCATION_ID_ALCHEMISTS_GARDEN,
+                "Alchemist's garden",
+                "Many plants are growing here.",
+                null,
+                null);
 
-        alchemistsGarden.MonsterLivingHere = MonsterByID(MONSTER_ID_RAT);
-        alchemistsGarden.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
+        alchemistsGarden.MonsterLivingHere =
+            MonsterByID(MONSTER_ID_RAT);
 
-        Location farmhouse = new Location(
-            LOCATION_ID_FARMHOUSE,
-            "Farmhouse",
-            "There is a small farmhouse, with a farmer in front.",
-            null,
-            null);
+        alchemistsGarden.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
 
-        farmhouse.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_FARMERS_FIELD);
+        Location farmhouse =
+            new Location(
+                LOCATION_ID_FARMHOUSE,
+                "Farmhouse",
+                "There is a small farmhouse, with a farmer in front.",
+                null,
+                null);
 
-        Location farmersField = new Location(
-            LOCATION_ID_FARM_FIELD,
-            "Farmer's field",
-            "You see rows of vegetables growing here.",
-            null,
-            null);
+        farmhouse.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_CLEAR_FARMERS_FIELD);
 
-        farmersField.MonsterLivingHere = MonsterByID(MONSTER_ID_SNAKE);
+        Location farmersField =
+            new Location(
+                LOCATION_ID_FARM_FIELD,
+                "Farmer's field",
+                "You see rows of vegetables growing here.",
+                null,
+                null);
 
-        farmersField.QuestAvailableHere = QuestByID(QUEST_ID_CLEAR_FARMERS_FIELD);
+        farmersField.MonsterLivingHere =
+            MonsterByID(MONSTER_ID_SNAKE);
 
+        farmersField.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_CLEAR_FARMERS_FIELD);
 
-        Location guardPost = new Location(
-            LOCATION_ID_GUARD_POST,
-            "Guard post",
-            "There is a large, tough-looking guard here.",
-            null,
-            null);
+        Location guardPost =
+            new Location(
+                LOCATION_ID_GUARD_POST,
+                "Guard post",
+                "There is a large, tough-looking guard here.",
+                null,
+                null);
 
-        Location bridge = new Location(
-            LOCATION_ID_BRIDGE,
-            "Bridge",
-            "A stone bridge crosses a wide river.",
-            null,
-            null);
+        Location bridge =
+            new Location(
+                LOCATION_ID_BRIDGE,
+                "Bridge",
+                "A stone bridge crosses a wide river.",
+                null,
+                null);
 
-        bridge.QuestAvailableHere = QuestByID(QUEST_ID_COLLECT_SPIDER_SILK);
+        bridge.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_COLLECT_SPIDER_SILK);
 
-        Location spiderField = new Location(
-            LOCATION_ID_SPIDER_FIELD,
-            "Forest",
-            "You see spider webs covering the trees in this forest.",
-            null,
-            null);
+        Location spiderField =
+            new Location(
+                LOCATION_ID_SPIDER_FIELD,
+                "Forest",
+                "You see spider webs covering the trees in this forest.",
+                null,
+                null);
 
-        spiderField.MonsterLivingHere = MonsterByID(MONSTER_ID_GIANT_SPIDER);
-        spiderField.QuestAvailableHere = QuestByID(QUEST_ID_COLLECT_SPIDER_SILK);
+        spiderField.MonsterLivingHere =
+            MonsterByID(MONSTER_ID_GIANT_SPIDER);
+
+        spiderField.QuestAvailableHere =
+            QuestByID(
+                QUEST_ID_COLLECT_SPIDER_SILK);
 
         home.LocationToNorth = townSquare;
 
@@ -277,7 +332,22 @@ public static class World
     {
         foreach (Quest quest in Quests)
         {
+            if (quest.IsComplete)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+            else if (quest.IsActive)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+            }
+
             Console.WriteLine(quest.GetInfo());
         }
+
+        Console.ResetColor();
     }
 }
