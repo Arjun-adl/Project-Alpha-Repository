@@ -6,6 +6,7 @@
     public int MaximumDamage;
     public int CurrentHitPoints;
     public int MaximumHitPoints;
+    public bool IsVillain;
 
     public Monster(int id, string name, int minimumDamage, int maximumDamage, int currentHitPoints, int maximumHitPoints)
     {
@@ -15,6 +16,7 @@
         MaximumDamage = maximumDamage;
         CurrentHitPoints = currentHitPoints;
         MaximumHitPoints = maximumHitPoints;
+        IsVillain = false;
     }
 }
 
@@ -22,13 +24,19 @@ public static class Battle
 {
     public const int HIT_CHANCE = 70;
     public const int BLOCK_CHANCE = 15;
+    public static int LastDamageDealt { get; private set; }
+    public static bool LastVillainDefeated { get; private set; }
 
     public static bool StartBattle(Player player, Monster monster)
     {
         Console.Clear();
+        LastDamageDealt = 0;
+        LastVillainDefeated = false;
 
         Console.WriteLine($"A {monster.Name} appears!");
         Console.WriteLine();
+
+        int totalDamageDealt = 0;
 
         while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
@@ -65,6 +73,7 @@ public static class Battle
                 string outcome = RollOutcome();
                 playerDamage = GetDamageForOutcome(outcome, playerDamage);
 
+                totalDamageDealt += playerDamage;
                 monster.CurrentHitPoints -= playerDamage;
 
                 if (monster.CurrentHitPoints < 0)
@@ -92,6 +101,9 @@ public static class Battle
 
                 if (monster.CurrentHitPoints <= 0)
                 {
+                    LastDamageDealt = totalDamageDealt;
+                    LastVillainDefeated = monster.IsVillain;
+
                     Console.WriteLine($"You defeated the {monster.Name}!");
 
                     CompleteQuest(monster);

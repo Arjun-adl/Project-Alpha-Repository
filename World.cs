@@ -5,13 +5,17 @@ public static class World
     public static readonly List<Potion> Potions = new List<Potion>();
     public static readonly List<Quest> Quests = new List<Quest>();
     public static readonly List<Location> Locations = new List<Location>();
+    public static readonly List<(Item Item, int Price)> ShopItems = new List<(Item Item, int Price)>();
 
     public static readonly Random RandomGenerator = new Random();
 
     public const int WEAPON_ID_RUSTY_SWORD = 1;
     public const int WEAPON_ID_CLUB = 2;
+    public const int WEAPON_ID_IRON_SWORD = 3;
+    public const int WEAPON_ID_STEEL_SWORD = 4;
 
     public const int POTION_ID_HEALING_POTION = 1;
+    public const int POTION_ID_PARACETAMOL = 2;
 
     public const int MONSTER_ID_RAT = 1;
     public const int MONSTER_ID_SNAKE = 2;
@@ -36,6 +40,7 @@ public static class World
         PopulateWeapons();
         PopulateMonsters();
         PopulatePotions();
+        PopulateShopItems();
         PopulateQuests();
         PopulateLocations();
     }
@@ -53,6 +58,18 @@ public static class World
                 WEAPON_ID_CLUB,
                 "Club",
                 10));
+
+        Weapons.Add(
+            new Weapon(
+                WEAPON_ID_IRON_SWORD,
+                "Iron sword",
+                18));
+
+        Weapons.Add(
+            new Weapon(
+                WEAPON_ID_STEEL_SWORD,
+                "Steel sword",
+                28));
     }
 
     public static void PopulatePotions()
@@ -62,6 +79,21 @@ public static class World
                 POTION_ID_HEALING_POTION,
                 "Healing Potion",
                 20));
+
+        Potions.Add(
+            new Potion(
+                POTION_ID_PARACETAMOL,
+                "Paracetamol",
+                15));
+    }
+
+    public static void PopulateShopItems()
+    {
+        ShopItems.Add((PotionByID(POTION_ID_HEALING_POTION), 50));
+        ShopItems.Add((PotionByID(POTION_ID_PARACETAMOL), 400));
+        ShopItems.Add((WeaponByID(WEAPON_ID_RUSTY_SWORD), 100));
+        ShopItems.Add((WeaponByID(WEAPON_ID_IRON_SWORD), 300));
+        ShopItems.Add((WeaponByID(WEAPON_ID_STEEL_SWORD), 500));
     }
 
     public static void PopulateMonsters()
@@ -69,6 +101,7 @@ public static class World
         Monster rat = new Monster(MONSTER_ID_RAT, "rat", 1, 3, 3, 3);
         Monster snake = new Monster(MONSTER_ID_SNAKE, "snake", 7, 10, 7, 7);
         Monster giantSpider = new Monster(MONSTER_ID_GIANT_SPIDER, "giant spider", 3, 10, 10, 10);
+        giantSpider.IsVillain = true;
 
         Monsters.Add(rat);
         Monsters.Add(snake);

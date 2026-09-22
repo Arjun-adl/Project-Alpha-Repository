@@ -214,4 +214,49 @@
             Console.Write(symbol);
         }
     }
+
+    public void ShowShop(Player player)
+    {
+        Console.Clear();
+        Console.WriteLine("===== TOWN SQUARE SHOP =====");
+        Console.WriteLine($"Your money: {player.Money} coins");
+        Console.WriteLine("No refunds. All sales final.");
+        Console.WriteLine();
+
+        for (int i = 0; i < World.ShopItems.Count; i++)
+        {
+            var item = World.ShopItems[i];
+            Console.WriteLine($"{i + 1}. {item.Item.Name} - {item.Price} coins");
+        }
+
+        Console.WriteLine("0. Leave shop");
+        Console.Write("Choose an item: ");
+
+        string? input = Console.ReadLine();
+
+        if (!int.TryParse(input, out int choice) || choice < 0 || choice > World.ShopItems.Count)
+        {
+            Console.WriteLine("Invalid selection.");
+            Console.ReadKey();
+            return;
+        }
+
+        if (choice == 0)
+        {
+            return;
+        }
+
+        var selectedItem = World.ShopItems[choice - 1];
+
+        if (!player.TrySpendMoney(selectedItem.Price))
+        {
+            Console.WriteLine($"You do not have enough money for {selectedItem.Item.Name}.");
+            Console.ReadKey();
+            return;
+        }
+
+        player.AddItem(selectedItem.Item);
+        Console.WriteLine($"You bought {selectedItem.Item.Name} for {selectedItem.Price} coins.");
+        Console.ReadKey();
+    }
 }
