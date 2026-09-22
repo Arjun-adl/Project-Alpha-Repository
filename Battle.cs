@@ -225,127 +225,141 @@ public static class Battle
         Console.Clear();
     }
 
-    private static void UseItem(Player player)
+    private static bool UseItem(Player player)
     {
-        List<Potion> potionsInInventory = new List<Potion>();
-        List<Weapon> weaponsInInventory = new List<Weapon>();
-
-        foreach (var kvp in player.inventory)
+        while (true)
         {
-            if (kvp.Key is Potion potion && kvp.Value > 0)
-            {
-                potionsInInventory.Add(potion);
-            }
-            else if (kvp.Key is Weapon weapon && kvp.Value > 0)
-            {
-                weaponsInInventory.Add(weapon);
-            }
-        }
+            List<Potion> potionsInInventory = new List<Potion>();
+            List<Weapon> weaponsInInventory = new List<Weapon>();
 
-        if (potionsInInventory.Count == 0 && weaponsInInventory.Count == 0)
-        {
+            foreach (var kvp in player.inventory)
+            {
+                if (kvp.Key is Potion potion && kvp.Value > 0)
+                {
+                    potionsInInventory.Add(potion);
+                }
+                else if (kvp.Key is Weapon weapon && kvp.Value > 0)
+                {
+                    weaponsInInventory.Add(weapon);
+                }
+            }
+
+            if (potionsInInventory.Count == 0 && weaponsInInventory.Count == 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("You have no usable items.");
+                Console.ReadKey();
+                return false;
+            }
+
             Console.WriteLine();
-            Console.WriteLine("You have no usable items.");
-            Console.ReadKey();
-            return;
-        }
+            Console.WriteLine("Items:");
 
-        Console.WriteLine();
-        Console.WriteLine("Items:");
+            int index = 1;
 
-        int index = 1;
-
-        foreach (Potion potion in potionsInInventory)
-        {
-            Console.WriteLine($"{index}. {potion.Name} x{player.inventory[potion]} (Potion - Healing: {potion.AmountToHeal})");
-            index++;
-        }
-
-        foreach (Weapon weapon in weaponsInInventory)
-        {
-            Console.WriteLine($"{index}. {weapon.Name} x{player.inventory[weapon]} (Weapon - Damage: {weapon.Damage})");
-            index++;
-        }
-
-        Console.WriteLine("0. Cancel");
-
-        string? input = Console.ReadLine();
-
-        if (!int.TryParse(input, out int choice))
-        {
-            Console.WriteLine("Invalid choice.");
-            Console.ReadKey();
-            return;
-        }
-
-        if (choice == 0)
-        {
-            return;
-        }
-
-        if (choice < 1 || choice > potionsInInventory.Count + weaponsInInventory.Count)
-        {
-            Console.WriteLine("Invalid choice.");
-            Console.ReadKey();
-            return;
-        }
-
-        if (choice <= potionsInInventory.Count)
-        {
-            Potion selectedPotion = potionsInInventory[choice - 1];
-
-            int oldHP = player.CurrentHitPoints;
-
-            player.CurrentHitPoints += selectedPotion.AmountToHeal;
-
-            if (player.CurrentHitPoints > player.MaximumHitPoints)
+            foreach (Potion potion in potionsInInventory)
             {
-                player.CurrentHitPoints = player.MaximumHitPoints;
+                Console.WriteLine($"{index}. {potion.Name} x{player.inventory[potion]} (Potion - Healing: {potion.AmountToHeal})");
+                index++;
             }
 
-            int actualHealing = player.CurrentHitPoints - oldHP;
-
-
-            if(player.inventory[selectedPotion] == 1)
+            foreach (Weapon weapon in weaponsInInventory)
             {
-                player.inventory.Remove(selectedPotion);
+                Console.WriteLine($"{index}. {weapon.Name} x{player.inventory[weapon]} (Weapon - Damage: {weapon.Damage})");
+                index++;
+            }
+
+            Console.WriteLine("0. Cancel");
+
+            string? input = Console.ReadLine();
+
+            if (!int.TryParse(input, out int choice))
+            {
+                Console.WriteLine("Invalid choice.");
+                Console.ReadKey();
+                Console.Clear();
+                continue;
+            }
+
+            if (choice == 0)
+            {
+                return false;
+            }
+
+            if (choice < 1 || choice > potionsInInventory.Count + weaponsInInventory.Count)
+            {
+                Console.WriteLine("Invalid choice.");
+                Console.ReadKey();
+                Console.Clear();
+                continue;
+            }
+
+            if (choice <= potionsInInventory.Count)
+            {
+                Potion selectedPotion = potionsInInventory[choice - 1];
+
+                int oldHP = player.CurrentHitPoints;
+
+                player.CurrentHitPoints += selectedPotion.AmountToHeal;
+
+                if (player.CurrentHitPoints > player.MaximumHitPoints)
+                {
+                    player.CurrentHitPoints = player.MaximumHitPoints;
+                }
+
+                int actualHealing = player.CurrentHitPoints - oldHP;
+
+                if (player.inventory[selectedPotion] == 1)
+                {
+                    player.inventory.Remove(selectedPotion);
+                }
+                else
+                {
+                    player.inventory[selectedPotion]--;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine($"You used a {selectedPotion.Name}.");
+                Console.WriteLine($"You recovered {actualHealing} HP.");
+                Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
+                Console.ReadKey();
+                Console.Clear();
+                return true;
             }
             else
-            {
-                player.inventory[selectedPotion]--;
-            }
-
-            Console.WriteLine();
-            Console.WriteLine($"You used a {selectedPotion.Name}.");
-            Console.WriteLine($"You recovered {actualHealing} HP.");
-            Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-        }
-        else
-        {
-            Console.WriteLine("You selected a weapon to equip. Are you sure you want to equip it? (Y/N)");
-            string confirm = Console.ReadLine().ToUpper();
-            if(confirm == null)
-            {
-                confirm = "";
-            }
-            if(confirm == "Y")
             {
                 int weaponIndex = choice - potionsInInventory.Count - 1;
                 Weapon selectedWeapon = weaponsInInventory[weaponIndex];
 
-                player.EquippedWeapon = selectedWeapon;
+                while (true)
+                {
+                    Console.WriteLine($"Equip {selectedWeapon.Name}? (Y/N)");
+                    string? confirm = Console.ReadLine()?.ToUpper() ?? "";
 
-                Console.WriteLine();
-                Console.WriteLine($"You have equipped {selectedWeapon.Name}.");  
-            }
-            if(confirm == "N")
-            {
-                return;
+                    if (confirm == "Y")
+                    {
+                        player.EquippedWeapon = selectedWeapon;
+
+                        Console.WriteLine();
+                        Console.WriteLine($"You have equipped {selectedWeapon.Name}.");
+                        Console.ReadKey();
+                        Console.Clear();
+                        return true;
+                    }
+                    else if (confirm == "N")
+                    {
+                        Console.Clear();
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option. Please enter Y or N.");
+                    }
+                }
+
+                continue;
             }
         }
-
-        Console.ReadKey();
-        Console.Clear();
     }
 
     private static void CompleteQuest(Monster monster)
