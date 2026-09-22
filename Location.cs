@@ -12,7 +12,12 @@
     public Quest? QuestAvailableHere;
     public Monster? MonsterLivingHere;
 
-    public Location(int id, string name, string description, Location? locationToNorth, Location? locationToEast)
+    public Location(
+        int id,
+        string name,
+        string description,
+        Location? locationToNorth,
+        Location? locationToEast)
     {
         ID = id;
         Name = name;
@@ -37,87 +42,140 @@
 
     public void ShowLocationInfo()
     {
-        Console.WriteLine($"You are at {Name}.");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"===== {Name} =====");
+        Console.ResetColor();
+
         Console.WriteLine(Description);
+        Console.WriteLine();
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
 
         if (LocationToNorth != null)
         {
-            Console.WriteLine($"To the North is {LocationToNorth.Name}.");
+            Console.WriteLine(
+                $"NORTH: {LocationToNorth.Name}");
         }
 
         if (LocationToEast != null)
         {
-            Console.WriteLine($"To the East is {LocationToEast.Name}.");
+            Console.WriteLine(
+                $"EAST: {LocationToEast.Name}");
         }
 
         if (LocationToSouth != null)
         {
-            Console.WriteLine($"To the South is {LocationToSouth.Name}.");
+            Console.WriteLine(
+                $"SOUTH: {LocationToSouth.Name}");
         }
 
         if (LocationToWest != null)
         {
-            Console.WriteLine($"To the West is {LocationToWest.Name}.");
+            Console.WriteLine(
+                $"WEST: {LocationToWest.Name}");
         }
+
+        Console.ResetColor();
     }
 
     public static void ShowMap(Player player)
     {
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("Map (X = player)");
+        Console.ResetColor();
 
         Console.ForegroundColor = ConsoleColor.Green;
 
         Console.Write("          [");
-        PrintMapSymbol(World.LOCATION_ID_ALCHEMISTS_GARDEN, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_ALCHEMISTS_GARDEN,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.WriteLine("]");
 
         Console.WriteLine("           |");
 
         Console.Write("          [");
-        PrintMapSymbol(World.LOCATION_ID_ALCHEMIST_HUT, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_ALCHEMIST_HUT,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.WriteLine("]");
 
         Console.WriteLine("           |");
 
         Console.Write("[");
-        PrintMapSymbol(World.LOCATION_ID_FARM_FIELD, player);
+
+        PrintMapSymbol(
+            World.LOCATION_ID_FARM_FIELD,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("]--[");
 
-        PrintMapSymbol(World.LOCATION_ID_FARMHOUSE, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_FARMHOUSE,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("]--[");
 
-        PrintMapSymbol(World.LOCATION_ID_TOWN_SQUARE, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_TOWN_SQUARE,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("]--[");
 
-        PrintMapSymbol(World.LOCATION_ID_GUARD_POST, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_GUARD_POST,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("]--[");
 
-        PrintMapSymbol(World.LOCATION_ID_BRIDGE, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_BRIDGE,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("]--[");
 
-        PrintMapSymbol(World.LOCATION_ID_SPIDER_FIELD, player);
+        PrintMapSymbol(
+            World.LOCATION_ID_SPIDER_FIELD,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.WriteLine("]");
 
         Console.WriteLine("           |");
 
         Console.Write("          [");
-        PrintMapSymbol(World.LOCATION_ID_HOME, player);
+
+        PrintMapSymbol(
+            World.LOCATION_ID_HOME,
+            player);
+
         Console.ForegroundColor = ConsoleColor.Green;
+
         Console.WriteLine("]");
 
         Console.ResetColor();
     }
 
-    public static char MapSymbol(int locationId, Player player)
+    public static char MapSymbol(
+        int locationId,
+        Player player)
     {
         if (player.PlayerLocation.ID == locationId)
         {
@@ -138,7 +196,10 @@
             _ => '?'
         };
     }
-    public static void PrintMapSymbol(int locationId, Player player)
+
+    public static void PrintMapSymbol(
+        int locationId,
+        Player player)
     {
         char symbol = MapSymbol(locationId, player);
 
@@ -146,7 +207,7 @@
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write(symbol);
-            Console.ResetColor();
+            Console.ForegroundColor = ConsoleColor.Green;
         }
         else
         {
@@ -154,4 +215,3 @@
         }
     }
 }
-
