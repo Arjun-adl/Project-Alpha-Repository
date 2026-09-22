@@ -67,7 +67,8 @@
             Console.WriteLine("1. Show location info");
             Console.WriteLine("2. Show Quest Log");
             Console.WriteLine("3. Show Inventory");
-            Console.WriteLine("4. Exit");
+            Console.WriteLine("4. Visit Town Square Shop");
+            Console.WriteLine("5. Exit");
             Console.ResetColor();
 
             Console.WriteLine();
@@ -140,18 +141,26 @@
                     Console.Clear();
                     player.UseInventoryItem();
 
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine("======== INVENTORY ========");
-                    Console.ResetColor();
+                    
 
-                    Console.WriteLine();
-
-                    player.PrintInventory();
-
-                    Console.ReadKey();
                     break;
 
                 case "4":
+                    if (player.PlayerLocation.ID == World.LOCATION_ID_TOWN_SQUARE)
+                    {
+                        player.PlayerLocation.ShowShop(player);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine();
+                        Console.WriteLine("The shop is only available in the Town Square.");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                    }
+                    break;
+
+                case "5":
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine();
                     Console.WriteLine("Thanks for playing!");

@@ -6,6 +6,7 @@
     public Weapon EquippedWeapon;
     public int CurrentHitPoints;
     public int MaximumHitPoints;
+    public int Money;
     private char lastInvalidDirection;
     private int invalidMoveCount;
 
@@ -17,8 +18,25 @@
         EquippedWeapon = equippedWeapon;
         MaximumHitPoints = 50;
         CurrentHitPoints = MaximumHitPoints;
+        Money = 0;
         lastInvalidDirection = '\0';
         invalidMoveCount = 0;
+    }
+
+    public bool TrySpendMoney(int amount)
+    {
+        if (amount <= 0)
+        {
+            return false;
+        }
+
+        if (Money < amount)
+        {
+            return false;
+        }
+
+        Money -= amount;
+        return true;
     }
 
     public void AddItem(Item item, int amount = 1)
@@ -33,46 +51,7 @@
         }
     }
 
-    public void PrintInventory()
-    {
-        while (true)
-        {
-            Console.Clear();
-
-            if (inventory.Count == 0)
-            {
-                Console.WriteLine("Inventory is empty.");
-            }
-            else
-            {
-                Console.WriteLine("Inventory: ");
-                foreach (var kvp in inventory)
-                {
-                    Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
-                }
-            }
-
-            Console.WriteLine($"Equipped Weapon: {(EquippedWeapon != null ? EquippedWeapon.Name : "None")}");
-            Console.WriteLine();
-            Console.WriteLine("Press Y to equip a weapon, or Enter to return to the main menu.");
-
-            string choice = Console.ReadLine() ?? "";
-
-            if (choice.ToUpper() == "Y")
-            {
-                EquipWeaponMenu();
-            }
-            else if (choice == "")
-            {
-                return;
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice. Press any key to try again.");
-                Console.ReadKey();
-            }
-        }
-    }
+    
 
     public bool UseInventoryItem()
     {
@@ -102,6 +81,7 @@
         while (true)
         {
             Console.WriteLine();
+            Console.WriteLine($"Money: {Money} coins");
             Console.WriteLine("Items:");
 
             int index = 1;
@@ -387,7 +367,7 @@
 
                     Console.ResetColor();
 
-                    Quest.GiveReward(this, quest);
+                    Quest.GiveReward(this, quest, CurrentHitPoints);
                 }
 
                 if (PlayerLocation.MonsterLivingHere != null &&
