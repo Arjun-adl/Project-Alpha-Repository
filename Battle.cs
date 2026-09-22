@@ -22,8 +22,11 @@
 
 public static class Battle
 {
-    public const int HIT_CHANCE = 70;
-    public const int BLOCK_CHANCE = 15;
+    public const int PLAYER_HIT_CHANCE = 70;
+    public const int PLAYER_BLOCK_CHANCE = 15;
+    public const int MONSTER_HIT_CHANCE = 70;
+    public const int MONSTER_BLOCK_CHANCE = 15;
+    public const int BLOCKING_BLOCK_CHANCE = 75;
     public static int LastDamageDealt { get; private set; }
     public static bool LastVillainDefeated { get; private set; }
 
@@ -44,10 +47,12 @@ public static class Battle
             Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}\n");
             Console.WriteLine($"Equipped Weapon: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "None")} (DMG: {(player.EquippedWeapon !=  null ? player.EquippedWeapon.Damage : 0)})");
             Console.WriteLine();
-            Console.WriteLine($"(Hit chance: {HIT_CHANCE}%, Block chance: {BLOCK_CHANCE}%, Missing chance: {100 - HIT_CHANCE - BLOCK_CHANCE}%)");
+            Console.WriteLine($"(Hit chance: {PLAYER_HIT_CHANCE}%, Block chance: {PLAYER_BLOCK_CHANCE}%, Missing chance: {100 - PLAYER_HIT_CHANCE - PLAYER_BLOCK_CHANCE}%)");
+            Console.WriteLine($"(The {monster.Name} hits {MONSTER_HIT_CHANCE}%, you block {MONSTER_BLOCK_CHANCE}%, blocking raises your block to {BLOCKING_BLOCK_CHANCE}%)");
             Console.WriteLine($"1. Attack");
-            Console.WriteLine("2. Use Item");
-            Console.WriteLine("3. Flee");
+            Console.WriteLine("2. Block");
+            Console.WriteLine("3. Use Item");
+            Console.WriteLine("4. Flee");
             Console.WriteLine();
 
             string? choice = Console.ReadLine();
@@ -70,7 +75,7 @@ public static class Battle
                     playerDamage = World.RandomGenerator.Next(1, 6);
                 }
 
-                string outcome = RollOutcome();
+                string outcome = RollOutcome(PLAYER_HIT_CHANCE, PLAYER_BLOCK_CHANCE);
                 playerDamage = GetDamageForOutcome(outcome, playerDamage);
 
                 totalDamageDealt += playerDamage;
@@ -120,6 +125,14 @@ public static class Battle
             }
             else if (choice == "2")
             {
+                Console.WriteLine();
+                Console.WriteLine("You raise your guard.");
+                Console.WriteLine();
+
+                MonsterAttack(player, monster, true);
+            }
+            else if (choice == "3")
+            {
                 bool usedItem = UseItem(player);
 
                 if (usedItem && player.CurrentHitPoints > 0)
@@ -132,7 +145,7 @@ public static class Battle
                     MonsterAttack(player, monster);
                 }
             }
-            else if (choice == "3")
+            else if (choice == "4")
             {
                 Console.WriteLine();
                 Console.WriteLine($"You fled from the {monster.Name}.");
@@ -163,18 +176,18 @@ public static class Battle
         return false;
     }
 
-    public static string RollOutcome()
+    public static string RollOutcome(int hitChance, int blockChance)
     {
         int roll = World.RandomGenerator.Next(1, 101);
 
-        if (roll <= HIT_CHANCE)
-        {
-            return "hit";
-        }
-
-        if (roll <= HIT_CHANCE + BLOCK_CHANCE)
+        if (roll <= blockChance)
         {
             return "blocked";
+        }
+
+        if (roll <= blockChance + hitChance)
+        {
+            return "hit";
         }
 
         return "miss";
@@ -195,13 +208,20 @@ public static class Battle
         return damage;
     }
 
-    private static void MonsterAttack(Player player, Monster monster)
+    private static void MonsterAttack(Player player, Monster monster, bool playerIsBlocking = false)
     {
         int monsterDamage = World.RandomGenerator.Next(
             monster.MinimumDamage,
             monster.MaximumDamage + 1);
 
-        string outcome = RollOutcome();
+        int blockChance = MONSTER_BLOCK_CHANCE;
+
+        if (playerIsBlocking)
+        {
+            blockChance = BLOCKING_BLOCK_CHANCE;
+        }
+
+        string outcome = RollOutcome(MONSTER_HIT_CHANCE, blockChance);
         monsterDamage = GetDamageForOutcome(outcome, monsterDamage);
 
         player.CurrentHitPoints -= monsterDamage;
@@ -214,6 +234,10 @@ public static class Battle
         if (outcome == "hit")
         {
             Console.WriteLine($"The {monster.Name} attacks you for {monsterDamage} damage.");
+        }
+        else if (outcome == "blocked" && playerIsBlocking)
+        {
+            Console.WriteLine($"Your guard holds. You block the {monster.Name}'s attack and take {monsterDamage} damage.");
         }
         else if (outcome == "blocked")
         {
