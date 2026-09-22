@@ -44,7 +44,18 @@
                 Console.WriteLine("Inventory: ");
                 foreach (var kvp in inventory)
                 {
-                    Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
+                    if (kvp.Key is Weapon weapon)
+                    {
+                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value} (Damage: {weapon.Damage})");
+                    }
+                    else if (kvp.Key is Potion potion)
+                    {
+                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value} (Healing: {potion.AmountToHeal})");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
+                    }
                 }
             }
 
