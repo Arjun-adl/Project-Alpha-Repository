@@ -33,6 +33,47 @@
         }
     }
 
+    public void PrintInventory()
+    {
+        while (true)
+        {
+            Console.Clear();
+
+            if (inventory.Count == 0)
+            {
+                Console.WriteLine("Inventory is empty.");
+            }
+            else
+            {
+                Console.WriteLine("Inventory: ");
+                foreach (var kvp in inventory)
+                {
+                    Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
+                }
+            }
+
+            Console.WriteLine($"Equipped Weapon: {(EquippedWeapon != null ? EquippedWeapon.Name : "None")}");
+            Console.WriteLine();
+            Console.WriteLine("Press Y to equip a weapon, or Enter to return to the main menu.");
+
+            string choice = Console.ReadLine() ?? "";
+
+            if (choice.ToUpper() == "Y")
+            {
+                EquipWeaponMenu();
+            }
+            else if (choice == "")
+            {
+                return;
+            }
+            else
+            {
+                Console.WriteLine("Invalid choice. Press any key to try again.");
+                Console.ReadKey();
+            }
+        }
+    }
+
     public bool UseInventoryItem()
     {
         List<Potion> potionsInInventory = new List<Potion>();
