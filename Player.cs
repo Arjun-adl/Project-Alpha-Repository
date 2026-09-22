@@ -256,6 +256,19 @@
         Console.ReadKey();
     }
 
+    public bool AnotherQuestIsActive(Quest questToStart)
+    {
+        foreach (Quest worldQuest in World.Quests)
+        {
+            if (worldQuest.IsActive && worldQuest.ID != questToStart.ID)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void Move(char direction)
     {
         Console.Clear();
@@ -296,6 +309,8 @@
                 (nextLocation.QuestAvailableHere != null &&
                 nextLocation.QuestAvailableHere.IsActive)))
             {
+                Location previousLocation = PlayerLocation;
+
                 PlayerLocation = nextLocation;
                 lastInvalidDirection = ' ';
                 invalidMoveCount = 0;
@@ -314,7 +329,18 @@
                     PlayerLocation.MonsterLivingHere == null &&
                     !quest.IsComplete)
                 {
-                    if (!quest.IsActive && !quest.IsComplete)
+                    if (!quest.IsActive && !quest.IsComplete && AnotherQuestIsActive(quest))
+                    {
+                        Console.WriteLine();
+
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+
+                        Console.WriteLine(
+                            "You are already on a quest. Finish it before you start another one.");
+
+                        Console.ResetColor();
+                    }
+                    else if (!quest.IsActive && !quest.IsComplete)
                     {
                         Console.WriteLine();
 
@@ -375,6 +401,19 @@
                     quest.IsActive)
                 {
                     Battle.StartBattle(this, PlayerLocation.MonsterLivingHere);
+
+                    if (Battle.LastFled)
+                    {
+                        PlayerLocation = previousLocation;
+
+                        Console.WriteLine();
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+
+                        Console.WriteLine($"You are back at {PlayerLocation.Name}.");
+
+                        Console.ResetColor();
+                    }
 
                     bool allQuestsComplete = true;
 

@@ -27,14 +27,17 @@ public static class Battle
     public const int MONSTER_HIT_CHANCE = 70;
     public const int MONSTER_BLOCK_CHANCE = 15;
     public const int BLOCKING_BLOCK_CHANCE = 75;
+    public const int FLEE_CHANCE = 50;
     public static int LastDamageDealt { get; private set; }
     public static bool LastVillainDefeated { get; private set; }
+    public static bool LastFled { get; private set; }
 
     public static bool StartBattle(Player player, Monster monster)
     {
         Console.Clear();
         LastDamageDealt = 0;
         LastVillainDefeated = false;
+        LastFled = false;
 
         Console.WriteLine($"A {monster.Name} appears!");
         Console.WriteLine();
@@ -148,9 +151,25 @@ public static class Battle
             else if (choice == "4")
             {
                 Console.WriteLine();
-                Console.WriteLine($"You fled from the {monster.Name}.");
+
+                if (World.RandomGenerator.Next(1, 101) <= FLEE_CHANCE)
+                {
+                    Console.WriteLine($"You got away from the {monster.Name}.");
+
+                    monster.CurrentHitPoints = monster.MaximumHitPoints;
+                    LastFled = true;
+
+                    Console.ReadKey();
+                    return false;
+                }
+
+                Console.WriteLine($"You could not get away from the {monster.Name}.");
+                Console.WriteLine();
+                Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
-                return false;
+                Console.Clear();
+
+                MonsterAttack(player, monster);
             }
             else
             {
@@ -165,6 +184,17 @@ public static class Battle
                 Console.WriteLine();
                 Console.WriteLine("You were defeated.");
                 Console.WriteLine("You return home.");
+
+                monster.CurrentHitPoints = monster.MaximumHitPoints;
+
+                Quest? failedQuest = QuestForMonster(monster);
+
+                if (failedQuest != null && failedQuest.IsActive)
+                {
+                    failedQuest.IsActive = false;
+
+                    Console.WriteLine($"Quest is no longer active: {failedQuest.Name}");
+                }
 
                 player.PlayerLocation = World.LocationByID(World.LOCATION_ID_HOME);
 
@@ -266,22 +296,29 @@ public static class Battle
         return player.UseInventoryItem();
     }
 
-    private static void CompleteQuest(Monster monster)
+    public static Quest? QuestForMonster(Monster monster)
     {
-        Quest? quest = null;
-
         if (monster.ID == World.MONSTER_ID_RAT)
         {
-            quest = World.QuestByID(World.QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
+            return World.QuestByID(World.QUEST_ID_CLEAR_ALCHEMIST_GARDEN);
         }
-        else if (monster.ID == World.MONSTER_ID_SNAKE)
+
+        if (monster.ID == World.MONSTER_ID_SNAKE)
         {
-            quest = World.QuestByID(World.QUEST_ID_CLEAR_FARMERS_FIELD);
+            return World.QuestByID(World.QUEST_ID_CLEAR_FARMERS_FIELD);
         }
-        else if (monster.ID == World.MONSTER_ID_GIANT_SPIDER)
+
+        if (monster.ID == World.MONSTER_ID_GIANT_SPIDER)
         {
-            quest = World.QuestByID(World.QUEST_ID_COLLECT_SPIDER_SILK);
+            return World.QuestByID(World.QUEST_ID_COLLECT_SPIDER_SILK);
         }
+
+        return null;
+    }
+
+    private static void CompleteQuest(Monster monster)
+    {
+        Quest? quest = QuestForMonster(monster);
 
         if (quest != null && quest.IsActive)
         {
