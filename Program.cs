@@ -138,6 +138,7 @@
 
                 case "3":
                     Console.Clear();
+                    player.UseInventoryItem();
 
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine("======== INVENTORY ========");
