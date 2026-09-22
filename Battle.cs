@@ -108,9 +108,9 @@ public static class Battle
             }
             else if (choice == "2")
             {
-                UseItem(player);
+                bool usedItem = UseItem(player);
 
-                if (player.CurrentHitPoints > 0)
+                if (usedItem && player.CurrentHitPoints > 0)
                 {
                     Console.WriteLine();
                     Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
