@@ -29,59 +29,160 @@
         }
     }
 
-    public void PrintInventory()
+    public bool UseInventoryItem()
     {
+        List<Potion> potionsInInventory = new List<Potion>();
+        List<Weapon> weaponsInInventory = new List<Weapon>();
+
+        foreach (var kvp in inventory)
+        {
+            if (kvp.Key is Potion potion && kvp.Value > 0)
+            {
+                potionsInInventory.Add(potion);
+            }
+            else if (kvp.Key is Weapon weapon && kvp.Value > 0)
+            {
+                weaponsInInventory.Add(weapon);
+            }
+        }
+
+        if (potionsInInventory.Count == 0 && weaponsInInventory.Count == 0)
+        {
+            Console.WriteLine();
+            Console.WriteLine("You have no usable items.");
+            Console.ReadKey();
+            return false;
+        }
+
         while (true)
         {
-            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine("Items:");
 
-            if (inventory.Count == 0)
+            int index = 1;
+
+            if (potionsInInventory.Count > 0)
             {
-                Console.WriteLine("Inventory is empty.");
-            }
-            else
-            {
-                Console.WriteLine("Inventory: ");
-                foreach (var kvp in inventory)
+                Console.WriteLine();
+                Console.WriteLine("-- Potions --");
+
+                foreach (Potion potion in potionsInInventory)
                 {
-                    if (kvp.Key is Weapon weapon)
-                    {
-                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value} (Damage: {weapon.Damage})");
-                    }
-                    else if (kvp.Key is Potion potion)
-                    {
-                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value} (Healing: {potion.AmountToHeal})");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{kvp.Key.Name} x{kvp.Value}");
-                    }
+                    Console.WriteLine($"{index}. {potion.Name} x{inventory[potion]} (Healing: {potion.AmountToHeal})");
+                    index++;
                 }
             }
 
-            Console.WriteLine($"Equipped Weapon: {(EquippedWeapon != null ? EquippedWeapon.Name : "None")}");
+            if (weaponsInInventory.Count > 0)
+            {
+                Console.WriteLine();
+                Console.WriteLine("-- Weapons --");
+
+                foreach (Weapon weapon in weaponsInInventory)
+                {
+                    string equippedTag = (weapon == EquippedWeapon) ? " (Equipped)" : "";
+                    Console.WriteLine($"{index}. {weapon.Name} x{inventory[weapon]} (Damage: {weapon.Damage}){equippedTag}");
+                    index++;
+                }
+            }
+
             Console.WriteLine();
-            Console.WriteLine("Press Y to equip a weapon, or Enter to return to the main menu.");
+            Console.WriteLine("0. Cancel");
 
-            string choice = Console.ReadLine();
+            string? input = Console.ReadLine();
 
-            if (choice == null)
+            if (!int.TryParse(input, out int choice))
             {
-                choice = "";
+                Console.WriteLine("Invalid choice.");
+                Console.ReadKey();
+                Console.Clear();
+                continue;
             }
 
-            if (choice.ToUpper() == "Y")
+            if (choice == 0)
             {
-                EquipWeaponMenu();
+                return false;
             }
-            else if (choice == "")
+
+            if (choice < 1 || choice > potionsInInventory.Count + weaponsInInventory.Count)
             {
-                return;
+                Console.WriteLine("Invalid choice.");
+                Console.ReadKey();
+                Console.Clear();
+                continue;
+            }
+
+            if (choice <= potionsInInventory.Count)
+            {
+                Potion selectedPotion = potionsInInventory[choice - 1];
+
+                int oldHP = CurrentHitPoints;
+
+                CurrentHitPoints += selectedPotion.AmountToHeal;
+
+                if (CurrentHitPoints > MaximumHitPoints)
+                {
+                    CurrentHitPoints = MaximumHitPoints;
+                }
+
+                int actualHealing = CurrentHitPoints - oldHP;
+
+                if (inventory[selectedPotion] == 1)
+                {
+                    inventory.Remove(selectedPotion);
+                }
+                else
+                {
+                    inventory[selectedPotion]--;
+                }
+
+                Console.WriteLine();
+                Console.WriteLine($"You used a {selectedPotion.Name}.");
+                Console.WriteLine($"You recovered {actualHealing} HP.");
+                Console.WriteLine($"Your HP: {CurrentHitPoints}/{MaximumHitPoints}");
+                Console.ReadKey();
+                Console.Clear();
+                return true;
             }
             else
             {
-                Console.WriteLine("Invalid choice. Press any key to try again.");
-                Console.ReadKey();
+                int weaponIndex = choice - potionsInInventory.Count - 1;
+                Weapon selectedWeapon = weaponsInInventory[weaponIndex];
+
+                if (selectedWeapon == EquippedWeapon)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"{selectedWeapon.Name} is already equipped.");
+                    Console.ReadKey();
+                    Console.Clear();
+                    continue;
+                }
+
+                while (true)
+                {
+                    Console.WriteLine($"Equip {selectedWeapon.Name}? (Y/N)");
+                    string confirm = Console.ReadLine()?.ToUpper() ?? "";
+
+                    if (confirm == "Y")
+                    {
+                        EquippedWeapon = selectedWeapon;
+
+                        Console.WriteLine();
+                        Console.WriteLine($"You have equipped {selectedWeapon.Name}.");
+                        Console.ReadKey();
+                        Console.Clear();
+                        return true;
+                    }
+                    else if (confirm == "N")
+                    {
+                        Console.Clear();
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid option. Please enter Y or N.");
+                    }
+                }
             }
         }
     }

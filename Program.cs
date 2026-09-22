@@ -143,7 +143,7 @@
 
                 case "4":
                     Console.Clear();
-                    player.PrintInventory();
+                    player.UseInventoryItem();
                     Console.ReadKey();
                     break;
 
