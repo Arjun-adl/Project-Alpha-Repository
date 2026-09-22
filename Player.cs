@@ -85,6 +85,7 @@
                     index++;
                 }
             }
+            Console.WriteLine("Choose an item to use or equip by entering its number, or enter 0 to cancel:");
 
             Console.WriteLine();
             Console.WriteLine("0. Cancel");
