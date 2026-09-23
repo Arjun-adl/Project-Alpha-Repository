@@ -104,7 +104,7 @@ public static class World
             1,
             3,
             3,
-            25,
+            100,
             3,
             3);
 
