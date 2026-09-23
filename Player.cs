@@ -7,6 +7,12 @@
     public int CurrentHitPoints;
     public int MaximumHitPoints;
     public int Money;
+
+    public int AttackPower;
+    public int Level;
+    public int Experience;
+    public int ExperienceToNextLevel;
+
     private char lastInvalidDirection;
     private int invalidMoveCount;
 
@@ -16,6 +22,12 @@
         inventory = new Dictionary<Item, int>();
         PlayerLocation = location;
         EquippedWeapon = equippedWeapon;
+
+        AttackPower = 5;
+        Level = 1;
+        Experience = 0;
+        ExperienceToNextLevel = 100;
+
         MaximumHitPoints = 50;
         CurrentHitPoints = MaximumHitPoints;
         Money = 0;
@@ -51,7 +63,40 @@
         }
     }
 
-    
+    public void GainExperience(int amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        Experience += amount;
+
+        while (Experience >= ExperienceToNextLevel)
+        {
+            Experience -= ExperienceToNextLevel;
+            LevelUp();
+        }
+    }
+
+    private void LevelUp()
+    {
+        Level++;
+        AttackPower += 2;
+
+        MaximumHitPoints += 5;
+        CurrentHitPoints = MaximumHitPoints;
+
+        ExperienceToNextLevel += 50;
+
+        Console.WriteLine();
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"You reached level {Level}!");
+        Console.WriteLine($"Your Attack Power increased to {AttackPower}!");
+        Console.WriteLine($"Your maximum HP increased to {MaximumHitPoints}.");
+        Console.ResetColor();
+        Console.WriteLine();
+    }
 
     public bool UseInventoryItem()
     {
@@ -106,10 +151,12 @@
                 foreach (Weapon weapon in weaponsInInventory)
                 {
                     string equippedTag = (weapon == EquippedWeapon) ? " (Equipped)" : "";
+
                     Console.WriteLine($"{index}. {weapon.Name} x{inventory[weapon]} (Damage: {weapon.Damage}){equippedTag}");
                     index++;
                 }
             }
+
             Console.WriteLine("Choose an item to use or equip by entering its number, or enter 0 to cancel:");
 
             Console.WriteLine();
@@ -268,14 +315,7 @@
         Console.Write("Enter direction (W/A/S/D): ");
         Console.ResetColor();
 
-        string? enteredDirection = direction.ToString();
-
-        if (enteredDirection == null)
-        {
-            enteredDirection = "";
-        }
-
-        enteredDirection = enteredDirection.ToUpper();
+        string enteredDirection = direction.ToString().ToUpper();
 
         if (enteredDirection.Length == 1)
         {
@@ -288,8 +328,7 @@
                 _ => '\0'
             };
 
-            Location? nextLocation =
-                PlayerLocation.Move(locationDirection);
+            Location? nextLocation = PlayerLocation.Move(locationDirection);
 
             if (nextLocation != null &&
                 (nextLocation.MonsterLivingHere == null ||
@@ -303,12 +342,10 @@
                 Console.WriteLine();
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(
-                    $"You moved to {nextLocation.Name}.");
+                Console.WriteLine($"You moved to {nextLocation.Name}.");
                 Console.ResetColor();
 
-                Quest? quest =
-                    PlayerLocation.QuestAvailableHere;
+                Quest? quest = PlayerLocation.QuestAvailableHere;
 
                 if (quest != null &&
                     PlayerLocation.MonsterLivingHere == null &&
@@ -318,22 +355,15 @@
                     {
                         Console.WriteLine();
 
-                        Console.ForegroundColor =
-                            ConsoleColor.Green;
-
-                        Console.WriteLine(
-                            $"Quest available: {quest.Name}");
-
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Quest available: {quest.Name}");
                         Console.ResetColor();
 
                         Console.WriteLine(quest.Description);
                         Console.WriteLine();
 
-                        Console.ForegroundColor =
-                            ConsoleColor.Yellow;
-
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.Write("Accept quest? (Y/N): ");
-
                         Console.ResetColor();
 
                         string? answer = Console.ReadLine();
@@ -345,12 +375,8 @@
 
                             Console.WriteLine();
 
-                            Console.ForegroundColor =
-                                ConsoleColor.Green;
-
-                            Console.WriteLine(
-                                $"Quest accepted: {quest.Name}");
-
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Quest accepted: {quest.Name}");
                             Console.ResetColor();
                         }
                     }
@@ -360,11 +386,8 @@
                 {
                     Console.WriteLine();
 
-                    Console.ForegroundColor =
-                        ConsoleColor.Green;
-
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Quest completed!");
-
                     Console.ResetColor();
 
                     Quest.GiveReward(this, quest, CurrentHitPoints);
@@ -391,30 +414,21 @@
                     {
                         Console.Clear();
 
-                        Console.ForegroundColor =
-                            ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.Green;
 
                         Console.WriteLine();
-                        Console.WriteLine(
-                            "================================");
-                        Console.WriteLine(
-                            "            YOU WIN!");
-                        Console.WriteLine(
-                            "================================");
+                        Console.WriteLine("================================");
+                        Console.WriteLine("            YOU WIN!");
+                        Console.WriteLine("================================");
 
                         Console.ResetColor();
 
                         Console.WriteLine();
-                        Console.WriteLine(
-                            "You completed all three quests!");
+                        Console.WriteLine("You completed all three quests!");
                         Console.WriteLine();
 
-                        Console.ForegroundColor =
-                            ConsoleColor.DarkGray;
-
-                        Console.WriteLine(
-                            "Press any key to exit...");
-
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.WriteLine("Press any key to exit...");
                         Console.ResetColor();
 
                         Console.ReadKey();
@@ -448,8 +462,7 @@
                 Console.ForegroundColor = ConsoleColor.Red;
 
                 Console.WriteLine();
-                Console.WriteLine(
-                    "You cannot move in that direction.");
+                Console.WriteLine("You cannot move in that direction.");
 
                 Console.ResetColor();
 
@@ -467,13 +480,11 @@
             Console.ForegroundColor = ConsoleColor.Red;
 
             Console.WriteLine();
-            Console.WriteLine(
-                "You cannot move in that direction.");
+            Console.WriteLine("You cannot move in that direction.");
 
             Console.ResetColor();
         }
 
         Console.ReadKey();
-        return;
     }
 }

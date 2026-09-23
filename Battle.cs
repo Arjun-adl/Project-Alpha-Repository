@@ -4,16 +4,28 @@
     public string Name;
     public int MinimumDamage;
     public int MaximumDamage;
+    public int AttackPower;
+    public int ExperienceReward;
     public int CurrentHitPoints;
     public int MaximumHitPoints;
     public bool IsVillain;
 
-    public Monster(int id, string name, int minimumDamage, int maximumDamage, int currentHitPoints, int maximumHitPoints)
+    public Monster(
+        int id,
+        string name,
+        int minimumDamage,
+        int maximumDamage,
+        int attackPower,
+        int experienceReward,
+        int currentHitPoints,
+        int maximumHitPoints)
     {
         ID = id;
         Name = name;
         MinimumDamage = minimumDamage;
         MaximumDamage = maximumDamage;
+        AttackPower = attackPower;
+        ExperienceReward = experienceReward;
         CurrentHitPoints = currentHitPoints;
         MaximumHitPoints = maximumHitPoints;
         IsVillain = false;
@@ -41,11 +53,23 @@ public static class Battle
         while (monster.CurrentHitPoints > 0 && player.CurrentHitPoints > 0)
         {
             Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
-            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}\n");
-            Console.WriteLine($"Equipped Weapon: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "None")} (DMG: {(player.EquippedWeapon !=  null ? player.EquippedWeapon.Damage : 0)})");
+            Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
+            Console.WriteLine();
+
+            int weaponDamage = player.EquippedWeapon != null
+                ? player.EquippedWeapon.Damage
+                : 0;
+
+            Console.WriteLine($"Your Attack Power: {player.AttackPower}");
+            Console.WriteLine($"Weapon Damage: {weaponDamage}");
+            Console.WriteLine($"Total Attack Damage: {player.AttackPower + weaponDamage}");
+            Console.WriteLine($"{monster.Name} Attack Power: {monster.AttackPower}");
+            Console.WriteLine();
+
+            Console.WriteLine($"Equipped Weapon: {(player.EquippedWeapon != null ? player.EquippedWeapon.Name : "None")} (DMG: {weaponDamage})");
             Console.WriteLine();
             Console.WriteLine($"(Hit chance: {HIT_CHANCE}%, Block chance: {BLOCK_CHANCE}%, Missing chance: {100 - HIT_CHANCE - BLOCK_CHANCE}%)");
-            Console.WriteLine($"1. Attack");
+            Console.WriteLine("1. Attack");
             Console.WriteLine("2. Use Item");
             Console.WriteLine("3. Flee");
             Console.WriteLine();
@@ -59,15 +83,11 @@ public static class Battle
 
             if (choice == "1")
             {
-                int playerDamage = 1;
+                int playerDamage = player.AttackPower;
 
                 if (player.EquippedWeapon != null)
                 {
-                    playerDamage = player.EquippedWeapon.Damage;
-                }
-                else
-                {
-                    playerDamage = World.RandomGenerator.Next(1, 6);
+                    playerDamage += player.EquippedWeapon.Damage;
                 }
 
                 string outcome = RollOutcome();
@@ -105,6 +125,12 @@ public static class Battle
                     LastVillainDefeated = monster.IsVillain;
 
                     Console.WriteLine($"You defeated the {monster.Name}!");
+
+                    if (monster.ExperienceReward > 0)
+                    {
+                        Console.WriteLine($"You gained {monster.ExperienceReward} experience.");
+                        player.GainExperience(monster.ExperienceReward);
+                    }
 
                     CompleteQuest(monster);
 
@@ -197,9 +223,7 @@ public static class Battle
 
     private static void MonsterAttack(Player player, Monster monster)
     {
-        int monsterDamage = World.RandomGenerator.Next(
-            monster.MinimumDamage,
-            monster.MaximumDamage + 1);
+        int monsterDamage = monster.AttackPower;
 
         string outcome = RollOutcome();
         monsterDamage = GetDamageForOutcome(outcome, monsterDamage);
@@ -223,6 +247,7 @@ public static class Battle
         {
             Console.WriteLine($"The {monster.Name} missed you. You take 0 damage.");
         }
+
         Console.WriteLine();
         Console.WriteLine($"Your HP: {player.CurrentHitPoints}/{player.MaximumHitPoints}");
         Console.WriteLine($"{monster.Name} HP: {monster.CurrentHitPoints}/{monster.MaximumHitPoints}");
@@ -264,8 +289,7 @@ public static class Battle
             quest.IsActive = false;
             quest.IsComplete = true;
 
-			Console.WriteLine($"Go to the quest giver to collect your reward.");
-
+            Console.WriteLine("Go to the quest giver to collect your reward.");
             Console.WriteLine($"Quest complete: {quest.Name}");
         }
     }
