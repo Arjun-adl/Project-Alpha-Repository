@@ -30,7 +30,7 @@
 
         MaximumHitPoints = 50;
         CurrentHitPoints = MaximumHitPoints;
-        Money = 0;
+        Money = 100000;
         lastInvalidDirection = '\0';
         invalidMoveCount = 0;
     }
@@ -311,10 +311,6 @@
 
         Console.WriteLine();
 
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write("Enter direction (W/A/S/D): ");
-        Console.ResetColor();
-
         string enteredDirection = direction.ToString().ToUpper();
 
         if (enteredDirection.Length == 1)
@@ -399,18 +395,7 @@
                 {
                     Battle.StartBattle(this, PlayerLocation.MonsterLivingHere);
 
-                    bool allQuestsComplete = true;
-
-                    foreach (Quest worldQuest in World.Quests)
-                    {
-                        if (!worldQuest.IsComplete)
-                        {
-                            allQuestsComplete = false;
-                            break;
-                        }
-                    }
-
-                    if (allQuestsComplete)
+                    if (Program.AllQuestsComplete())
                     {
                         Console.Clear();
 
@@ -435,6 +420,23 @@
 
                         return;
                     }
+                }
+
+                if (PlayerLocation == World.LocationByID(World.LOCATION_ID_HOME) && Program.AllQuestsComplete())
+                {
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You completed all quests and returned home.");
+                    Console.WriteLine("You have made the town a safer place for everyone.");
+                    Console.WriteLine("Rest now, knowing that your efforts have made a difference.");
+                    Console.WriteLine("The adventure is over.");
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Press any key to exit...");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Environment.Exit(0);
                 }
             }
             else
