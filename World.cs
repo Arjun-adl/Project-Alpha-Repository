@@ -84,7 +84,7 @@ public static class World
             new Potion(
                 POTION_ID_PARACETAMOL,
                 "Paracetamol",
-                15));
+                50));
     }
 
     public static void PopulateShopItems()
@@ -104,9 +104,9 @@ public static class World
             1,
             3,
             3,
-            100,
-            3,
-            3);
+            25,
+            10,
+            10);
 
         Monster snake = new Monster(
             MONSTER_ID_SNAKE,
@@ -115,8 +115,8 @@ public static class World
             10,
             7,
             50,
-            7,
-            7);
+            20,
+            20);
 
         Monster giantSpider = new Monster(
             MONSTER_ID_GIANT_SPIDER,
@@ -125,8 +125,8 @@ public static class World
             10,
             10,
             75,
-            10,
-            10);
+            30,
+            30);
 
         giantSpider.IsVillain = true;
 

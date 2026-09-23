@@ -58,7 +58,38 @@
             // Menu
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("What would you like to do?");
-            Console.WriteLine("Move W/A/S/D");
+
+            List<string> availableDirections = new List<string>();
+
+            if (player.PlayerLocation.LocationToNorth != null)
+            {
+                availableDirections.Add("W = north");
+            }
+
+            if (player.PlayerLocation.LocationToWest != null)
+            {
+                availableDirections.Add("A = west");
+            }
+
+            if (player.PlayerLocation.LocationToSouth != null)
+            {
+                availableDirections.Add("S = south");
+            }
+
+            if (player.PlayerLocation.LocationToEast != null)
+            {
+                availableDirections.Add("D = east");
+            }
+
+            if (availableDirections.Count > 0)
+            {
+                Console.WriteLine(string.Join(", ", availableDirections));
+            }
+            else
+            {
+                Console.WriteLine("No directions available.");
+            }
+
             Console.ResetColor();
 
             Console.WriteLine();
@@ -182,7 +213,7 @@
         }
     }
 
-    private static bool AllQuestsComplete()
+    public static bool AllQuestsComplete()
     {
         foreach (Quest quest in World.Quests)
         {
